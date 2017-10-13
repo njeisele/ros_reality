@@ -14,9 +14,14 @@ public class TFListener : MonoBehaviour
 
     public class CurrentJointInfo
     {
-        public string name { get; set; }
-        public List<float> pos { get; set; }
-        public List<float> rot { get; set; }
+        public string name;
+        public List<float> pos;
+        public List<float> rot;
+	
+	 public CurrentJointInfo CreateFromJSON(string jsonString)
+    	{
+      	  return JsonUtility.FromJson<CurrentJointInfo>(jsonString);
+   	 }
     }
 
 	// Use this for initialization
@@ -43,8 +48,7 @@ public class TFListener : MonoBehaviour
         //Debug.Log(string.Join(", ", tfElements));
         foreach (string tfElement in tfElements) {
             //continue;
-            //var currentJoint = JsonUtility.FromJson<CurrentJointInfo>(tfElement);
-            var currentJoint = JsonUtility.FromJson<CurrentJointInfo>(tfElement);
+            CurrentJointInfo currentJoint = new CurrentJointInfo(tfElement);
             Debug.Log(currentJoint.name);
             GameObject cur = GameObject.Find (currentJoint.name + "Pivot"); // replace with hashmap
 			if (cur != null) {
@@ -53,7 +57,7 @@ public class TFListener : MonoBehaviour
                 Vector3 curPos = new Vector3 (currentJoint.pos[0], currentJoint.pos[1], currentJoint.pos[2]); //save current position
 			
                 //rotation
-				Quaternion curRot = new Quaternion (currentJoint.rot[0], currentJoint.rot[1], currentJoint.rot[2], currentJoint.rot[3]);
+		Quaternion curRot = new Quaternion (currentJoint.rot[0], currentJoint.rot[1], currentJoint.rot[2], currentJoint.rot[3]);
 
 				cur.transform.position = Vector3.Lerp(scale * RosToUnityPositionAxisConversion (curPos), cur.transform.position, 0.7f); //convert ROS coordinates to Unity coordinates and scale for position vector
 				cur.transform.rotation = Quaternion.Slerp(RosToUnityQuaternionConversion (curRot), cur.transform.rotation, 0.7f); //convert ROS quaternions to Unity quarternions
