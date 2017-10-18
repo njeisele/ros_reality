@@ -11,12 +11,17 @@ public class TFListener : MonoBehaviour
 	public string topic = "ros_unity";
 
 	public float scale = 1f;
-
+    
+    [Serializable]
     public class CurrentJointInfo
     {
-        public string name { get; set; }
-        public List<float> pos { get; set; }
-        public List<float> rot { get; set; }
+        public string name;
+        public List<float> pos;
+        public List<float> rot;
+	
+	public static CurrentJointInfo CreateFromJSON(string jsonString){
+		return JsonUtility.FromJson<PlayerInfo>(jsonString);
+		}
     }
 
 	// Use this for initialization
@@ -44,7 +49,7 @@ public class TFListener : MonoBehaviour
         foreach (string tfElement in tfElements) {
             //continue;
             //var currentJoint = JsonUtility.FromJson<CurrentJointInfo>(tfElement);
-            var currentJoint = JsonUtility.FromJson<CurrentJointInfo>(tfElement);
+            CurrentJointInfo currentJoint = new CurrentJointInfo(tfElement);
             Debug.Log(currentJoint.name);
             GameObject cur = GameObject.Find (currentJoint.name + "Pivot"); // replace with hashmap
 			if (cur != null) {
